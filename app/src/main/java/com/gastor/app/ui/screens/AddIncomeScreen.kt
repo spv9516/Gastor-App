@@ -1,6 +1,8 @@
 package com.gastor.app.ui.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.foundation.background
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -11,69 +13,180 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gastor.app.viewmodel.TransactionViewModel
 import com.gastor.app.data.model.Transaction
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddIncomeScreen(
     navController: NavController,
     viewModel: TransactionViewModel = viewModel()
 ) {
-
     var amount by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("28/02/2026") }
+    
+    val categories = listOf("Salario", "Regalo", "Venta", "Inversión", "Otros")
+    var selectedCategory by remember { mutableStateOf("Selecciona una categoría") }
+    var expandedCategory by remember { mutableStateOf(false) }
 
+    val bgColor = androidx.compose.ui.graphics.Color(0xFFEFEFEF)
+    val topBarColor = com.gastor.app.ui.theme.NeonGreen
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .background(bgColor)
     ) {
-
-        Text(
-            text = "Registrar Ingreso",
-            fontSize = 26.sp
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        OutlinedTextField(
-            value = amount,
-            onValueChange = { amount = it },
-            label = { Text("Monto") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        OutlinedTextField(
-            value = note,
-            onValueChange = { note = it },
-            label = { Text("Nota (opcional)") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Button(
-            onClick = {
-
-                if (amount.isNotEmpty()) {
-
-                    viewModel.addTransaction(
-                        Transaction(
-                            amount = amount.toDouble(),
-                            category = "Ingreso",
-                            date = System.currentTimeMillis(),
-                            type = "income",
-                            note = note
-                        )
-                    )
-
-                    navController.popBackStack()
-                }
-            },
+        // Top Bar
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(55.dp)
+                .background(topBarColor)
+                .padding(top = 40.dp, bottom = 20.dp, start = 16.dp, end = 16.dp),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
-            Text("Guardar Ingreso")
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    androidx.compose.material.icons.Icons.Filled.ArrowBack, 
+                    contentDescription = "Back", 
+                    tint = androidx.compose.ui.graphics.Color.White, 
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Registrar Ingreso",
+                fontSize = 22.sp,
+                color = androidx.compose.ui.graphics.Color.White,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp)
+        ) {
+            GastorInputCard {
+                GastorInputHeader("💲", "Monto *")
+                OutlinedTextField(
+                    value = amount,
+                    onValueChange = { amount = it },
+                    placeholder = { Text("0.00", color = androidx.compose.ui.graphics.Color.Gray) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = androidx.compose.ui.graphics.Color.White,
+                        unfocusedContainerColor = androidx.compose.ui.graphics.Color.White,
+                        focusedBorderColor = topBarColor,
+                        unfocusedBorderColor = androidx.compose.ui.graphics.Color.LightGray
+                    ),
+                    textStyle = androidx.compose.ui.text.TextStyle(color = androidx.compose.ui.graphics.Color.Black)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            GastorInputCard {
+                GastorInputHeader("🏷️", "Categoría *")
+                ExposedDropdownMenuBox(
+                    expanded = expandedCategory,
+                    onExpandedChange = { expandedCategory = !expandedCategory }
+                ) {
+                    OutlinedTextField(
+                        value = selectedCategory,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
+                        modifier = Modifier.menuAnchor().fillMaxWidth(),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = androidx.compose.ui.graphics.Color.White,
+                            unfocusedContainerColor = androidx.compose.ui.graphics.Color.White,
+                            focusedBorderColor = topBarColor,
+                            unfocusedBorderColor = androidx.compose.ui.graphics.Color.LightGray
+                        ),
+                        textStyle = androidx.compose.ui.text.TextStyle(color = androidx.compose.ui.graphics.Color.Black)
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expandedCategory,
+                        onDismissRequest = { expandedCategory = false },
+                        modifier = Modifier.background(androidx.compose.ui.graphics.Color.White)
+                    ) {
+                        categories.forEach { category ->
+                            DropdownMenuItem(
+                                text = { Text(category, color = androidx.compose.ui.graphics.Color.Black) },
+                                onClick = {
+                                    selectedCategory = category
+                                    expandedCategory = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            GastorInputCard {
+                GastorInputHeader("📅", "Fecha *")
+                OutlinedTextField(
+                    value = date,
+                    onValueChange = { date = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = androidx.compose.ui.graphics.Color.White,
+                        unfocusedContainerColor = androidx.compose.ui.graphics.Color.White,
+                        focusedBorderColor = topBarColor,
+                        unfocusedBorderColor = androidx.compose.ui.graphics.Color.LightGray
+                    ),
+                    textStyle = androidx.compose.ui.text.TextStyle(color = androidx.compose.ui.graphics.Color.Black)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            GastorInputCard {
+                GastorInputHeader("📝", "Nota (opcional)")
+                OutlinedTextField(
+                    value = note,
+                    onValueChange = { note = it },
+                    placeholder = { Text("Agrega una descripción...", color = androidx.compose.ui.graphics.Color.Gray) },
+                    modifier = Modifier.fillMaxWidth().height(120.dp),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = androidx.compose.ui.graphics.Color.White,
+                        unfocusedContainerColor = androidx.compose.ui.graphics.Color.White,
+                        focusedBorderColor = topBarColor,
+                        unfocusedBorderColor = androidx.compose.ui.graphics.Color.LightGray
+                    ),
+                    textStyle = androidx.compose.ui.text.TextStyle(color = androidx.compose.ui.graphics.Color.Black)
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = {
+                    if (amount.isNotEmpty() && selectedCategory != "Selecciona una categoría") {
+                        viewModel.addTransaction(
+                            Transaction(
+                                amount = amount.toDouble(),
+                                category = selectedCategory,
+                                date = System.currentTimeMillis(),
+                                type = "income",
+                                note = note
+                            )
+                        )
+                        navController.popBackStack()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().height(55.dp),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = topBarColor)
+            ) {
+                Text("Guardar Ingreso", fontSize = 18.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = androidx.compose.ui.graphics.Color.White)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
