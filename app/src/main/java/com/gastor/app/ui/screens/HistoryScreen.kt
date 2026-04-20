@@ -13,17 +13,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gastor.app.viewmodel.TransactionViewModel
 import com.gastor.app.data.model.Transaction
 
+import androidx.navigation.NavController
+import com.gastor.app.ui.theme.CoreBackground
+
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(navController: NavController) {
 
     val viewModel: TransactionViewModel = viewModel()
     val transactions = viewModel.transactions.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp)
-    ) {
+    Scaffold(
+        bottomBar = { com.gastor.app.ui.components.GastorBottomNavBar(navController) },
+        containerColor = CoreBackground
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(20.dp)
+        ) {
 
         Text(
             text = "Historial",
@@ -41,6 +49,7 @@ fun HistoryScreen() {
                 Spacer(modifier = Modifier.height(10.dp))
             }
         }
+    }
     }
 }
 

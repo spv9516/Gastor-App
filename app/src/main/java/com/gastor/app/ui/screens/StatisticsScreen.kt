@@ -11,8 +11,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gastor.app.viewmodel.TransactionViewModel
 
+import androidx.navigation.NavController
+import com.gastor.app.ui.theme.CoreBackground
+
 @Composable
-fun StatisticsScreen() {
+fun StatisticsScreen(navController: NavController) {
 
     val viewModel: TransactionViewModel = viewModel()
 
@@ -38,11 +41,16 @@ fun StatisticsScreen() {
         "Aún no hay suficientes datos"
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp)
-    ) {
+    Scaffold(
+        bottomBar = { com.gastor.app.ui.components.GastorBottomNavBar(navController) },
+        containerColor = CoreBackground
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(20.dp)
+        ) {
 
         Text("Estadísticas", fontSize = 26.sp)
 
@@ -79,6 +87,7 @@ fun StatisticsScreen() {
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+    }
     }
 }
 

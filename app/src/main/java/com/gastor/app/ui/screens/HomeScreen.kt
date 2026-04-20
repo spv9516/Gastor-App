@@ -92,33 +92,7 @@ fun HomeScreen(navController: NavController) {
             }
         },
         bottomBar = {
-            NavigationBar(
-                containerColor = CoreBackground,
-                contentColor = Color.White
-            ) {
-                NavigationBarItem(
-                    selected = true,
-                    onClick = {},
-                    icon = { Text("❖") },
-                    label = { Text("Inicio") },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = AccentCyan,
-                        indicatorColor = SurfaceCard
-                    )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navController.navigate("statistics") },
-                    icon = { Text("↗") },
-                    label = { Text("Estadísticas") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navController.navigate("history") },
-                    icon = { Text("≡") },
-                    label = { Text("Historial") }
-                )
-            }
+            com.gastor.app.ui.components.GastorBottomNavBar(navController)
         },
         containerColor = CoreBackground
     ) { padding ->

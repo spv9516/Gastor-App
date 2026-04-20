@@ -30,10 +30,10 @@ fun AppNavigation() {
             AddExpenseScreen(navController)
         }
         composable("history") {
-            HistoryScreen()
+            HistoryScreen(navController)
         }
         composable("statistics") {
-            StatisticsScreen()
+            StatisticsScreen(navController)
         }
         composable("add_income") {
             AddIncomeScreen(navController)
